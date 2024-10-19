@@ -3,6 +3,7 @@ package com.tops.kotlin.sharedpreferencestaskapp
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,13 +25,24 @@ class SplashActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             if (isOnboardingComplete()) {
                 // Onboarding is completed, redirect to LoginActivity
-                startActivity(Intent(this, LoginActivity::class.java))
+                if (isUserLoggedIn()) {
+                    // User is already logged in, redirect to HomeActivity
+                    startActivity(Intent(this, HomeActivity::class.java))
+                } else {
+                    // User is not logged in, show the login screen
+                    startActivity(Intent(this, LoginActivity::class.java))
+                }
             } else {
                 // Onboarding is not completed, redirect to OnBoardingActivity
                 startActivity(Intent(this, OnBoardingActivity::class.java))
             }
             finish() // Close the splash screen
         }, 2000) // 2 second delay
+    }
+
+    private fun isUserLoggedIn(): Boolean {
+        val sharedPref: SharedPreferences = getSharedPreferences("appPreferences", MODE_PRIVATE)
+        return sharedPref.getBoolean("isLoggedIn", false)
     }
 
     // Function to check if onboarding is complete using SharedPreferences
