@@ -1,7 +1,9 @@
 package com.tops.kotlin.sharedpreferencestaskapp
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,7 +20,23 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.loginBtn.setOnClickListener {
-            startActivity(Intent(this, HomeActivity::class.java))
+            val email = binding.edtEmailAddress.text.toString().trim()
+            val password = binding.edtPassword.text.toString().trim()
+
+            // Check if the credentials are correct
+            val sharedPref: SharedPreferences = getSharedPreferences("appPreferences", MODE_PRIVATE)
+            val savedEmail = sharedPref.getString("email", null)
+            val savedPassword = sharedPref.getString("password", null)
+
+            if (email == savedEmail && password == savedPassword) {
+                // Login successful, redirect to HomeActivity
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish() // Close the login screen
+            } else {
+                // Show error if credentials are incorrect
+                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.txtCreateAccount.setOnClickListener {
