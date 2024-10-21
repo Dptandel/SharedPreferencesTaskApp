@@ -24,25 +24,14 @@ class SplashActivity : AppCompatActivity() {
         // Add a log to check if onboardingComplete flag is being read correctly
         Handler(Looper.getMainLooper()).postDelayed({
             if (isOnboardingComplete()) {
-                // Onboarding is completed, redirect to LoginActivity
-                if (isUserLoggedIn()) {
-                    // User is already logged in, redirect to HomeActivity
-                    startActivity(Intent(this, HomeActivity::class.java))
-                } else {
-                    // User is not logged in, show the login screen
-                    startActivity(Intent(this, LoginActivity::class.java))
-                }
+                // Onboarding is complete, now check if the user is logged in
+                checkLoginStatus()
             } else {
                 // Onboarding is not completed, redirect to OnBoardingActivity
                 startActivity(Intent(this, OnBoardingActivity::class.java))
+                finish() // Close the splash screen
             }
-            finish() // Close the splash screen
         }, 2000) // 2 second delay
-    }
-
-    private fun isUserLoggedIn(): Boolean {
-        val sharedPref: SharedPreferences = getSharedPreferences("appPreferences", MODE_PRIVATE)
-        return sharedPref.getBoolean("isLoggedIn", false)
     }
 
     // Function to check if onboarding is complete using SharedPreferences
@@ -54,5 +43,23 @@ class SplashActivity : AppCompatActivity() {
         Log.d("TAG", "Onboarding complete status: $isComplete")
 
         return isComplete
+    }
+
+    // Function to check if the user is logged in
+    private fun checkLoginStatus() {
+        val sharedPreferences = getSharedPreferences("appPreferences", MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+
+        if (isLoggedIn) {
+            // User is logged in, navigate to the home screen
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            // Redirect to the login screen
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }

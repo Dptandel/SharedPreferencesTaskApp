@@ -32,16 +32,22 @@ class HomeActivity : AppCompatActivity() {
 
         // Logout button listener
         binding.btnLogout.setOnClickListener {
-            // Clear the user data from SharedPreferences
-            with(sharedPref.edit()) {
-                clear() // Clear all data
-                apply() // Apply changes
-            }
-
-            // Redirect to LoginActivity
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish() // Close HomeActivity
+            // Call the logout function
+            logout()
         }
+    }
+
+    // Logout function
+    private fun logout() {
+        // Clear the SharedPreferences
+        val sharedPreferences = getSharedPreferences("appPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+
+        // Redirect to login screen
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()  // Close the current activity
     }
 }
